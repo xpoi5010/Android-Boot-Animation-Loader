@@ -1,0 +1,101 @@
+﻿-2018/09/24
+--AndroidAnimation.cs
+---Line:209
+----Start
+            if (index >= info.parts.Count())
+            {
+                BootFinishedEvent();
+                stop = true;
+                return;
+            }
+            if (info.parts[index].Textures.Count() <= frameInfo.texture_index)
+            {
+                /*
+                frameInfo.play_end = true;
+                frameInfo.texture_index--;
+                */
+                frameInfo.playcount++;
+                
+            }
+            if (frameInfo.playcount >= info.parts[index].count && info.parts[index].count != 0)
+            {
+                frameInfo.play_end = true;
+                return;
+            }
+            else if (frameInfo.playcount < info.parts[index].count && info.parts[index].count != 0 && info.parts[index].Textures.Count() <= frameInfo.texture_index)
+                frameInfo.texture_index = 0;
+            if (info.parts[index].type == AnimationPart.AniType.p && finished)
+            {
+                if (info.parts[index].count != 0) index++;
+                else frameInfo = new FrameInfo();
+                return;
+            }
+----Stop
+---Line:240
+----Start
+            if (frameInfo.play_end)
+            {
+                if (frameInfo.pause < info.parts[index].pause)
+                {
+                    frameInfo.pause++;
+                    return;
+                }
+                else
+                {
+                    frameInfo = new FrameInfo();
+                    if (info.parts[index].count != 0) index++;
+                    
+                }
+            }
+            else
+            {
+                frameInfo.texture_index++;
+            }
+----Stop
+
+-2018/09/29
+--AndroidAnimation.cs
+---Line: 239
+----Start
+            if (frameInfo.texture_index >= info.parts[index].Textures.Count() - 1)
+            {
+                frameInfo.paused = true;
+            }
+            if (frameInfo.paused)
+            {
+                if (frameInfo.pause >= info.parts[index].pause)
+                {
+                    frameInfo.paused = false;
+                    frameInfo.playcount++;
+                    frameInfo.partEnd = true;
+                }
+                else
+                {
+                    frameInfo.pause++;
+                }
+            }
+            else frameInfo.texture_index++;
+            frameInfo.playcount = info.parts[index].count == 0 ? -1 : frameInfo.playcount;
+            if (frameInfo.playcount >= info.parts[index].count)
+            {
+                frameInfo = new FrameInfo();
+                index++;
+            }
+            else if (frameInfo.partEnd)
+            {
+                frameInfo.texture_index = 0;
+                frameInfo.partEnd = false;
+            }
+            if (index >= info.parts.Count())
+            {
+                BootFinished();
+                stop = true;
+            }
+            if (info.parts[index].type == AnimationPart.AniType.p && bootfinished)
+            {
+                BootFinished();
+                stop = true;
+            }
+
+
+----Stop
